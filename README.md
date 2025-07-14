@@ -80,5 +80,9 @@ This project is intended for educational and research purposes only. It is not a
 
 ---
 ### Diabetic
-<img width="1920" height="1080" alt="Screenshot (216)" src="https://github.com/user-attachments/assets/db293e00-23a0-4e48-ad93-a0bff5ba2c66" />
+<img width="1920" height="960" alt="Screenshot (216)" src="https://github.com/user-attachments/assets/ea3d41e2-792c-4c4e-8dbe-2b600f834351" />
 ---
+### Non Diabetic
+<img width="1920" height="909" alt="Screenshot (215)" src="https://github.com/user-attachments/assets/63cea5be-62eb-42f6-a7ce-ae4c669efbb4" />
+---
+
