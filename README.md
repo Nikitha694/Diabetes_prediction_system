@@ -79,3 +79,6 @@ The dataset used in this project is located in the repository as `diabetes.csv`.
 This project is intended for educational and research purposes only. It is not a substitute for professional medical advice.
 
 ---
+### Diabetic
+<img width="1920" height="1080" alt="Screenshot (216)" src="https://github.com/user-attachments/assets/db293e00-23a0-4e48-ad93-a0bff5ba2c66" />
+---
