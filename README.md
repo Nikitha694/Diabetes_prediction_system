@@ -1,73 +1,90 @@
-# Welcome to your Lovable project
+# 🩺 Diabetes Prediction System
 
-## Project info
+A Machine Learning-based system designed to predict the likelihood of diabetes in individuals using real-world health data. This project uses a custom dataset and applies **Logistic Regression** to deliver accurate and interpretable results.
 
-**URL**: https://lovable.dev/projects/46191fbc-e9d4-452f-b7fc-d1ba7065ef1e
+## 💡 Overview
 
-## How can I edit this code?
+The system takes in multiple medical features such as glucose level, BMI, blood pressure, and lifestyle indicators to predict whether a person is diabetic. The model is trained using **Logistic Regression**, and includes data preprocessing, model evaluation, and result visualization.
 
-There are several ways of editing your application.
+## 📌 Key Features
 
-**Use Lovable**
+* ✅ Custom dataset with realistic medical records
+* 🤖 ML model built with Logistic Regression
+* 📊 Data preprocessing and missing value handling
+* 📈 Accuracy score, classification report, and visualizations
+* 🔬 Helpful for early diabetes risk assessment
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/46191fbc-e9d4-452f-b7fc-d1ba7065ef1e) and start prompting.
+## 📁 Dataset Info
 
-Changes made via Lovable will be committed automatically to this repo.
+The dataset used in this project is located in the repository as `diabetes.csv`. It includes the following features:
 
-**Use your preferred IDE**
+### 🧾 Input Features:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+* Age
+* Gender
+* Polyuria
+* Polydipsia
+* Sudden Weight Loss
+* Weakness
+* Polyphagia
+* Genital Thrush
+* Visual Blurring
+* Itching
+* Irritability
+* Delayed Healing
+* Partial Paresis
+* Muscle Stiffness
+* Alopecia
+* Obesity
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 🎯 Target:
 
-Follow these steps:
+* **Class**: Indicates if the person is diabetic or not (`Positive` / `Negative`)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🛠️ Tech Stack
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+* **Language**: Python
+* **Libraries**: Pandas, NumPy, Seaborn, Matplotlib, Scikit-learn
+* **Model**: Logistic Regression
+* **Notebook**: Jupyter Notebook (`.ipynb`)
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🚀 How to Run
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+1. Clone the repository:
 
-**Edit a file directly in GitHub**
+   ```bash
+   git clone https://github.com/Nikitha694/Diabetes_prediction_system.git
+   cd Diabetes_prediction_system
+   ```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+2. Install required libraries:
 
-**Use GitHub Codespaces**
+   ```bash
+   pip install pandas numpy matplotlib seaborn scikit-learn
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+3. Open and run the notebook:
 
-## What technologies are used for this project?
+   ```bash
+   jupyter notebook Diabetes_prediction_system.ipynb
+   ```
 
-This project is built with:
+## 📈 Model Performance
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+* **Accuracy**: Displayed at the end of the notebook (based on your dataset)
+* **Evaluation Metrics**: Confusion matrix and classification report included
 
-## How can I deploy this project?
+## 📌 Note
 
-Simply open [Lovable](https://lovable.dev/projects/46191fbc-e9d4-452f-b7fc-d1ba7065ef1e) and click on Share -> Publish.
+This project is intended for educational and research purposes only. It is not a substitute for professional medical advice.
 
-## Can I connect a custom domain to my Lovable project?
+---
+### Diabetic
+<img width="1920" height="960" alt="Screenshot (216)" src="https://github.com/user-attachments/assets/ea3d41e2-792c-4c4e-8dbe-2b600f834351" />
+---
 
-Yes, you can!
+---
+### Non Diabetic
+<img width="1920" height="909" alt="Screenshot (215)" src="https://github.com/user-attachments/assets/63cea5be-62eb-42f6-a7ce-ae4c669efbb4" />
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
