@@ -4,30 +4,42 @@ import pandas as pd
 import numpy as np
 import pickle
 from tensorflow.keras.models import load_model
+import os
 
+# ------------------ App Setup ------------------
 app = Flask(__name__)
 CORS(app)
 
 # ------------------ Paths ------------------
-MODEL_PATH = "diabetes_bilayered_model.h5"
-SCALER_PATH = "scaler.pkl"
-ENCODER_PATH = "encoder.pkl"
+BASE_DIR = os.path.dirname(__file__)  # backend folder
+MODEL_PATH = os.path.join(BASE_DIR, "diabetes_bilayered_model.h5")
+SCALER_PATH = os.path.join(BASE_DIR, "scaler.pkl")
+ENCODER_PATH = os.path.join(BASE_DIR, "encoder.pkl")
 
-# ------------------ Load model, scaler, encoders ------------------
-model = load_model(MODEL_PATH)
+# ------------------ Load Model & Pickles ------------------
+try:
+    model = load_model(MODEL_PATH)
+except Exception as e:
+    raise Exception(f"Error loading model: {e}")
 
-with open(SCALER_PATH, 'rb') as f:
-    scaler = pickle.load(f)
+try:
+    with open(SCALER_PATH, 'rb') as f:
+        scaler = pickle.load(f)
+except Exception as e:
+    raise Exception(f"Error loading scaler: {e}")
 
-with open(ENCODER_PATH, 'rb') as f:
-    encoders = pickle.load(f)
+try:
+    with open(ENCODER_PATH, 'rb') as f:
+        encoders = pickle.load(f)
+except Exception as e:
+    raise Exception(f"Error loading encoders: {e}")
 
-# ------------------ API Routes ------------------
-@app.route('/')
+# ------------------ Routes ------------------
+@app.route("/")
 def index():
     return "✅ Diabetes Prediction API is running!"
 
-@app.route('/predict', methods=['POST'])
+@app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json()
     try:
@@ -46,7 +58,7 @@ def predict():
         # Map booleans to strings used in training
         bool_map = {True: 'Yes', False: 'No'}
 
-        # Build DataFrame
+        # Build DataFrame from input
         row = {}
         for key, col in feature_map.items():
             value = data.get(key)
@@ -74,11 +86,10 @@ def predict():
 
         # Predict
         pred_prob = float(model.predict(X_scaled)[0][0])
-        confidence = round(pred_prob * 100, 1)  # convert to percentage
-
+        confidence = round(pred_prob * 100, 1)  # percentage
         prediction = 'Diabetic' if pred_prob >= 0.5 else 'Non-Diabetic'
 
-        # Risk factors from raw input
+        # Extract risk factors
         risk_features_map = {
             'polyuria': 'Polyuria',
             'polydipsia': 'Polydipsia',
@@ -88,7 +99,6 @@ def predict():
             'alopecia': 'Alopecia',
             'irritability': 'Irritability'
         }
-
         risk_factors = [name for key, name in risk_features_map.items() if data.get(key)]
 
         # Recommendations
@@ -114,6 +124,7 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
+# ------------------ Run App ------------------
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # dynamic port for Render
+    app.run(host="0.0.0.0", port=port)
