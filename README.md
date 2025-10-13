@@ -77,4 +77,6 @@ Open `http://localhost:5173` in your browser to see the app locally.
 * 🌐 Multi-language support.
 
 ---
+<img width="1794" height="901" alt="image" src="https://github.com/user-attachments/assets/9a1a2c0e-661b-4422-a1c7-d6b9bc5b9e23" />
+
 
