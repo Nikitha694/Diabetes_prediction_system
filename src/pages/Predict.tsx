@@ -60,7 +60,7 @@ const Predict = () => {
   };
 
   const callBackendPredict = async (data: FormData): Promise<PredictionResult> => {
-    const response = await axios.post('https://diabetes-prediction-system-iag6.onrender.com/predict', data);
+    const response = await axios.post('https://diabetes-prediction-system-2-y2fw.onrender.com/predict', data);
     return response.data;
   };
 
