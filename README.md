@@ -83,10 +83,13 @@ Open `http://localhost:5173` in your browser to see the app locally.
 ### 1️⃣ Home Page
 <img width="1789" height="904" alt="image" src="https://github.com/user-attachments/assets/2af75321-a0f3-48d2-b291-416331d34b85" />
 
-### 2️⃣ Non-Diabetic Result
+### 2️⃣ Predict Result
+<img width="1747" height="906" alt="image" src="https://github.com/user-attachments/assets/2f02dae7-f367-4671-a3c8-d291d6dcc3d2" />
+
+### 3️⃣ Non-Diabetic Result
 <img width="1794" height="901" alt="image" src="https://github.com/user-attachments/assets/9a1a2c0e-661b-4422-a1c7-d6b9bc5b9e23" />
 
-### 3️⃣ Diabetic Result
+### 4️⃣  Diabetic Result
 <img width="1766" height="896" alt="Screenshot (296)" src="https://github.com/user-attachments/assets/b6b1f84f-9bd6-4487-ae8e-11ed1804eb72" />
 
 
