@@ -1,4 +1,3 @@
-print("FLASK APP IMPORTED SUCCESSFULLY")
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
@@ -10,34 +9,49 @@ import joblib
 app = Flask(__name__)
 CORS(app)
 
-# ⭐ Safe base path (works locally + Railway)
+# ⭐ Safe base path (Railway + Local)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 MODEL_PATH = os.path.join(BASE_DIR, "diabetes_model.pkl")
 ENCODER_PATH = os.path.join(BASE_DIR, "encoder.pkl")
 TARGET_ENCODER_PATH = os.path.join(BASE_DIR, "target_encoder.pkl")
 
-# ================= LOAD FILES =================
-try:
-    model = joblib.load(MODEL_PATH)
-    with open(ENCODER_PATH, "rb") as f:
-        encoders = pickle.load(f)
-    with open(TARGET_ENCODER_PATH, "rb") as f:
-        target_encoder = pickle.load(f)
-except Exception as e:
-    print("Model loading error:", e)
+# ⭐ Lazy loaded assets (IMPORTANT for Railway)
+model = None
+encoders = None
+target_encoder = None
+
+
+def load_assets():
+    global model, encoders, target_encoder
+
+    if model is None:
+        print("🔄 Loading ML assets...")
+        model = joblib.load(MODEL_PATH)
+
+        with open(ENCODER_PATH, "rb") as f:
+            encoders = pickle.load(f)
+
+        with open(TARGET_ENCODER_PATH, "rb") as f:
+            target_encoder = pickle.load(f)
+
+        print("✅ ML assets loaded successfully!")
+
 
 # ================= ROOT =================
 @app.route('/')
 def home():
     return "✅ Diabetes Prediction API is running!"
 
+
 # ================= PREDICT =================
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json()
-
     try:
+        load_assets()  # ⭐ Load only when needed
+
+        data = request.get_json()
+
         feature_map = {
             'polyuria': 'Polyuria',
             'gender': 'Gender',
@@ -73,8 +87,8 @@ def predict():
             df[col] = le.transform(df[col])
 
         encoded = df.values
-        prob = model.predict_proba(encoded)[0][1]
 
+        prob = model.predict_proba(encoded)[0][1]
         prediction = "Diabetic" if prob >= 0.65 else "Non-Diabetic"
 
         risk_map = {
@@ -101,4 +115,5 @@ def predict():
         })
 
     except Exception as e:
+        print("❌ Prediction error:", e)
         return jsonify({"error": str(e)}), 400
