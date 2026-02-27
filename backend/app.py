@@ -1,37 +1,32 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
-import numpy as np
 import pickle
-from tensorflow.keras.models import load_model
+import joblib
 
 app = Flask(__name__)
 CORS(app)
 
-# ------------------ Paths ------------------
-MODEL_PATH = "diabetes_bilayered_model.h5"
-SCALER_PATH = "scaler.pkl"
-ENCODER_PATH = "encoder.pkl"
+# ================= LOAD FILES =================
+model = joblib.load("diabetes_model.pkl")
 
-# ------------------ Load model, scaler, encoders ------------------
-model = load_model(MODEL_PATH)
-
-with open(SCALER_PATH, 'rb') as f:
-    scaler = pickle.load(f)
-
-with open(ENCODER_PATH, 'rb') as f:
+with open("encoder.pkl", "rb") as f:
     encoders = pickle.load(f)
 
-# ------------------ API Routes ------------------
+with open("target_encoder.pkl", "rb") as f:
+    target_encoder = pickle.load(f)
+
+# ================= ROOT =================
 @app.route('/')
-def index():
+def home():
     return "✅ Diabetes Prediction API is running!"
 
+# ================= PREDICT =================
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json()
+
     try:
-        # Map frontend keys to dataset column names
         feature_map = {
             'polyuria': 'Polyuria',
             'gender': 'Gender',
@@ -43,43 +38,40 @@ def predict():
             'irritability': 'Irritability'
         }
 
-        # Map booleans to strings used in training
         bool_map = {True: 'Yes', False: 'No'}
 
-        # Build DataFrame
         row = {}
         for key, col in feature_map.items():
             value = data.get(key)
+
             if value is None:
                 return jsonify({"error": f"Missing field: {key}"}), 400
 
             if isinstance(value, bool):
-                value = bool_map[value]  # True/False → Yes/No
+                value = bool_map[value]
             elif key == 'gender':
-                value = str(value).capitalize()  # Male/Female
+                value = str(value).capitalize()
 
             row[col] = [value]
 
         df = pd.DataFrame(row)
 
-        # Encode features using saved LabelEncoders
+        # Encode
         for col in df.columns:
             le = encoders[col]
-            if df[col][0] not in le.classes_:
-                return jsonify({"error": f"Invalid value '{df[col][0]}' for column '{col}'"}), 400
             df[col] = le.transform(df[col])
 
-        # Scale features
-        X_scaled = scaler.transform(df)
-
         # Predict
-        pred_prob = float(model.predict(X_scaled)[0][0])
-        confidence = round(pred_prob * 100, 1)  # convert to percentage
+        encoded = df.values
+        pred = model.predict(encoded)
+        prob = model.predict_proba(encoded)[0][1]
 
-        prediction = 'Diabetic' if pred_prob >= 0.5 else 'Non-Diabetic'
+        prob = model.predict_proba(encoded)[0][1]
 
-        # Risk factors from raw input
-        risk_features_map = {
+        prediction = "Diabetic" if prob >= 0.65 else "Non-Diabetic"
+
+        # Risk factors
+        risk_map = {
             'polyuria': 'Polyuria',
             'polydipsia': 'Polydipsia',
             'suddenWeightLoss': 'Sudden Weight Loss',
@@ -89,31 +81,22 @@ def predict():
             'irritability': 'Irritability'
         }
 
-        risk_factors = [name for key, name in risk_features_map.items() if data.get(key)]
-
-        # Recommendations
-        recommendations = [
-            "Consult with a healthcare provider immediately",
-            "Consider blood glucose testing",
-            "Monitor your diet and exercise regularly",
-            "Keep a symptom diary"
-        ] if prediction == 'Diabetic' else [
-            "Continue maintaining a healthy lifestyle",
-            "Regular checkups with healthcare provider",
-            "Monitor for any new symptoms",
-            "Keep a balanced diet and exercise routine"
-        ]
+        risk_factors = [v for k, v in risk_map.items() if data.get(k)]
 
         return jsonify({
             "prediction": prediction,
-            "confidence": confidence,
+            "confidence": round(prob * 100, 1),
             "riskFactors": risk_factors,
-            "recommendations": recommendations
+            "recommendations": [
+                "Consult doctor for further tests",
+                "Maintain healthy lifestyle",
+                "Monitor symptoms regularly"
+            ]
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

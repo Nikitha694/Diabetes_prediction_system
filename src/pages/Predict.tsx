@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,8 @@ import { AlertCircle, CheckCircle, Activity, TrendingUp, Loader2 } from 'lucide-
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { NavLink } from 'react-router-dom';
+
+const API_URL = "http://127.0.0.1:5000";
 
 interface FormData {
   polyuria: boolean;
@@ -44,44 +46,35 @@ const Predict = () => {
     irritability: false,
     gender: '',
   });
-
-  const medicalQuestions = [
-    { key: 'polyuria' as keyof FormData, label: 'Polyuria', description: 'Frequent urination, especially at night' },
-    { key: 'polydipsia' as keyof FormData, label: 'Polydipsia', description: 'Excessive thirst or drinking large amounts of water' },
-    { key: 'suddenWeightLoss' as keyof FormData, label: 'Sudden Weight Loss', description: 'Unexplained rapid weight loss' },
-    { key: 'partialParesis' as keyof FormData, label: 'Partial Paresis', description: 'Weakness or slight paralysis in limbs' },
-    { key: 'visualBlurring' as keyof FormData, label: 'Visual Blurring', description: 'Blurred or impaired vision' },
-    { key: 'alopecia' as keyof FormData, label: 'Alopecia', description: 'Hair loss or thinning hair' },
-    { key: 'irritability' as keyof FormData, label: 'Irritability', description: 'Increased irritability or mood changes' },
-  ];
-
-  const updateFormData = (key: keyof FormData, value: boolean | string) => {
-    setFormData(prev => ({ ...prev, [key]: value }));
-  };
+const medicalQuestions = [
+  { key: 'polyuria' as keyof FormData, label: 'Polyuria', description: 'Frequent urination, especially at night' },
+  { key: 'polydipsia' as keyof FormData, label: 'Polydipsia', description: 'Excessive thirst' },
+  { key: 'suddenWeightLoss' as keyof FormData, label: 'Sudden Weight Loss', description: 'Unexplained weight loss' },
+  { key: 'partialParesis' as keyof FormData, label: 'Partial Paresis', description: 'Weakness in limbs' },
+  { key: 'visualBlurring' as keyof FormData, label: 'Visual Blurring', description: 'Blurred vision' },
+  { key: 'alopecia' as keyof FormData, label: 'Alopecia', description: 'Hair loss' },
+  { key: 'irritability' as keyof FormData, label: 'Irritability', description: 'Mood changes' },
+];
+const updateFormData = <K extends keyof FormData>(
+  key: K,
+  value: FormData[K]
+) => {
+  setFormData(prev => ({ ...prev, [key]: value }));
+};
+  useEffect(() => {
+    axios.get(API_URL).catch(() => {});
+  }, []);
 
   const callBackendPredict = async (data: FormData): Promise<PredictionResult> => {
-    const response = await axios.post('http://127.0.0.1:5000/predict', data);
-    return response.data;
+    const res = await axios.post(`${API_URL}/predict`, data);
+    return res.data;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to use the prediction feature.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!formData.gender) {
-      toast({
-        title: "Missing Information",
-        description: "Please select your gender to continue.",
-        variant: "destructive",
-      });
+      toast({ title: "Login required", variant: "destructive" });
       return;
     }
 
@@ -90,18 +83,8 @@ const Predict = () => {
     try {
       const prediction = await callBackendPredict(formData);
       setResult(prediction);
-
-      toast({
-        title: "Analysis Complete",
-        description: "Your diabetes risk assessment has been generated.",
-      });
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: "Error",
-        description: "Failed to generate prediction. Please make sure the backend is running.",
-        variant: "destructive",
-      });
+    } catch (err) {
+      toast({ title: "Prediction failed", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -121,6 +104,8 @@ const Predict = () => {
     setResult(null);
   };
 
+
+  // ⭐ YOUR UI BELOW REMAINS EXACTLY SAME
   if (!user) {
     return (
       <div className="min-h-screen bg-background py-12 px-4">
