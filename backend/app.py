@@ -107,6 +107,3 @@ def predict():
         return jsonify({"error": str(e)}), 400
 
 
-
-
-)
