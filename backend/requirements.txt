@@ -1,6 +1,5 @@
 flask
 flask-cors
-tensorflow
 pandas
 numpy
 scikit-learn
