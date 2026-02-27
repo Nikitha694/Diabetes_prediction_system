@@ -5,19 +5,24 @@ import pickle
 import os
 import joblib
 
-
 # ------------------ App Setup ------------------
 app = Flask(__name__)
 CORS(app)
 
+# ⭐ Safe base path (works locally + Railway)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL_PATH = os.path.join(BASE_DIR, "backend", "diabetes_model.pkl")
+ENCODER_PATH = os.path.join(BASE_DIR, "backend", "encoder.pkl")
+TARGET_ENCODER_PATH = os.path.join(BASE_DIR, "backend", "target_encoder.pkl")
 
 # ================= LOAD FILES =================
-model = joblib.load("diabetes_model.pkl")
+model = joblib.load(MODEL_PATH)
 
-with open("encoder.pkl", "rb") as f:
+with open(ENCODER_PATH, "rb") as f:
     encoders = pickle.load(f)
 
-with open("target_encoder.pkl", "rb") as f:
+with open(TARGET_ENCODER_PATH, "rb") as f:
     target_encoder = pickle.load(f)
 
 # ================= ROOT =================
@@ -27,7 +32,6 @@ def home():
 
 # ================= PREDICT =================
 @app.route('/predict', methods=['POST'])
-
 def predict():
     data = request.get_json()
 
@@ -44,7 +48,6 @@ def predict():
         }
 
         bool_map = {True: 'Yes', False: 'No'}
-
 
         row = {}
         for key, col in feature_map.items():
@@ -67,19 +70,12 @@ def predict():
             le = encoders[col]
             df[col] = le.transform(df[col])
 
-        # Predict
-
         encoded = df.values
-        pred = model.predict(encoded)
-        prob = model.predict_proba(encoded)[0][1]
-
         prob = model.predict_proba(encoded)[0][1]
 
         prediction = "Diabetic" if prob >= 0.65 else "Non-Diabetic"
 
-        # Risk factors
         risk_map = {
-
             'polyuria': 'Polyuria',
             'polydipsia': 'Polydipsia',
             'suddenWeightLoss': 'Sudden Weight Loss',
@@ -88,7 +84,6 @@ def predict():
             'alopecia': 'Alopecia',
             'irritability': 'Irritability'
         }
-
 
         risk_factors = [v for k, v in risk_map.items() if data.get(k)]
 
@@ -105,5 +100,3 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
-
