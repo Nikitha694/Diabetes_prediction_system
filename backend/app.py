@@ -17,13 +17,14 @@ ENCODER_PATH = os.path.join(BASE_DIR, "encoder.pkl")
 TARGET_ENCODER_PATH = os.path.join(BASE_DIR, "target_encoder.pkl")
 
 # ================= LOAD FILES =================
-model = joblib.load(MODEL_PATH)
-
-with open(ENCODER_PATH, "rb") as f:
-    encoders = pickle.load(f)
-
-with open(TARGET_ENCODER_PATH, "rb") as f:
-    target_encoder = pickle.load(f)
+try:
+    model = joblib.load(MODEL_PATH)
+    with open(ENCODER_PATH, "rb") as f:
+        encoders = pickle.load(f)
+    with open(TARGET_ENCODER_PATH, "rb") as f:
+        target_encoder = pickle.load(f)
+except Exception as e:
+    print("Model loading error:", e)
 
 # ================= ROOT =================
 @app.route('/')
