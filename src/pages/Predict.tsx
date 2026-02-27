@@ -66,8 +66,10 @@ const updateFormData = <K extends keyof FormData>(
   }, []);
 
   const callBackendPredict = async (data: FormData): Promise<PredictionResult> => {
+
     const res = await axios.post(`${API_URL}/predict`, data);
     return res.data;
+
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

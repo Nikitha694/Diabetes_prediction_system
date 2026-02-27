@@ -2,10 +2,14 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import pickle
+
 import joblib
 
+
+# ------------------ App Setup ------------------
 app = Flask(__name__)
 CORS(app)
+
 
 # ================= LOAD FILES =================
 model = joblib.load("diabetes_model.pkl")
@@ -23,6 +27,7 @@ def home():
 
 # ================= PREDICT =================
 @app.route('/predict', methods=['POST'])
+
 def predict():
     data = request.get_json()
 
@@ -39,6 +44,7 @@ def predict():
         }
 
         bool_map = {True: 'Yes', False: 'No'}
+
 
         row = {}
         for key, col in feature_map.items():
@@ -62,6 +68,7 @@ def predict():
             df[col] = le.transform(df[col])
 
         # Predict
+
         encoded = df.values
         pred = model.predict(encoded)
         prob = model.predict_proba(encoded)[0][1]
@@ -72,6 +79,7 @@ def predict():
 
         # Risk factors
         risk_map = {
+
             'polyuria': 'Polyuria',
             'polydipsia': 'Polydipsia',
             'suddenWeightLoss': 'Sudden Weight Loss',
@@ -80,6 +88,7 @@ def predict():
             'alopecia': 'Alopecia',
             'irritability': 'Irritability'
         }
+
 
         risk_factors = [v for k, v in risk_map.items() if data.get(k)]
 
@@ -96,6 +105,7 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
 
 
 if __name__ == "__main__":
