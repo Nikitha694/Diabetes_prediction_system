@@ -12,9 +12,9 @@ CORS(app)
 # ⭐ Safe base path (works locally + Railway)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-MODEL_PATH = os.path.join(BASE_DIR, "backend", "diabetes_model.pkl")
-ENCODER_PATH = os.path.join(BASE_DIR, "backend", "encoder.pkl")
-TARGET_ENCODER_PATH = os.path.join(BASE_DIR, "backend", "target_encoder.pkl")
+MODEL_PATH = os.path.join(BASE_DIR, "diabetes_model.pkl")
+ENCODER_PATH = os.path.join(BASE_DIR, "encoder.pkl")
+TARGET_ENCODER_PATH = os.path.join(BASE_DIR, "target_encoder.pkl")
 
 # ================= LOAD FILES =================
 model = joblib.load(MODEL_PATH)
