@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { NavLink } from 'react-router-dom';
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = "https://diabetes-prediction-system-3-1zqr.onrender.com/";
 
 interface FormData {
   polyuria: boolean;
